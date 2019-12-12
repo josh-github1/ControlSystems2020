@@ -9,7 +9,7 @@ class asmemxa : public Servo
   explicit constexpr asmemxa(const Pwm & pwm) : Servo(pwm) {}
 
   void Initialize(
-      units::frequency::hertz_t frequency = 50_kHz) override
+      units::frequency::hertz_t frequency = 50_Hz) override
   {
     Servo::Initialize(frequency);
     Servo::SetPulseBounds(500us, 2500us);
