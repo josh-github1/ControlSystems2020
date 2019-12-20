@@ -40,7 +40,7 @@ class GpioCounter : public HardwareCounter
   /// @param edge - The digital signal edge to count up on.
   /// @param pull - Set the pull resistor for the pin, when the pin is not
   ///        connected.
-  GpioCounter(sjsu::Gpio & gpio,
+  explicit constexpr GpioCounter(sjsu::Gpio & gpio,
               sjsu::Gpio::Edge edge,
               sjsu::Pin::Resistor pull = sjsu::Pin::Resistor::kPullUp)
       : gpio_(gpio), edge_(edge), pull_(pull)
