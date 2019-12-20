@@ -1,15 +1,16 @@
-#include "L2_HAL/sensors/battery/ltc4150.hpp"
-#include "L4_Testing/testing_frameworks.hpp"
+#include "L1_Peripheral/hardware_counter.hpp"
 #include "L1_Peripheral/interrupt.hpp"
 #include "L1_Peripheral/gpio.hpp"
+#include "L2_HAL/sensors/battery/ltc4150.hpp"
+#include "L4_Testing/testing_frameworks.hpp"
 #include "utility/units.hpp"
 #include "utility/log.hpp"
 
 namespace sjsu
 {
-auto GetLambda(sjsu::InterruptCallback & isr)
+auto GetLambda(InterruptCallback & isr)
 {
-  return [&isr](sjsu::InterruptCallback callback, sjsu::Gpio::Edge) {
+  return [&isr](InterruptCallback callback, Gpio::Edge) {
     isr = callback;
   };
 }
@@ -24,10 +25,14 @@ TEST_CASE("Test LTC4150 Coulomb Counter/ Battery Gas Gauge", "[ltc4150]")
   Mock<Gpio> mock_backup_input_pin;
   Mock<Gpio> mock_backup_pol_pin;
 
-  sjsu::InterruptCallback primary_input_isr;
-  sjsu::InterruptCallback primary_pol_isr;
-  sjsu::InterruptCallback backup_input_isr;
-  sjsu::InterruptCallback backup_pol_isr;
+  // GpioCounter int_pin_counter;
+
+  Mock<GpioCounter> int_pin_counter;
+
+  InterruptCallback primary_input_isr;
+  InterruptCallback primary_pol_isr;
+  InterruptCallback backup_input_isr;
+  InterruptCallback backup_pol_isr;
 
   When(Method(mock_primary_input_pin, AttachInterrupt))
       .AlwaysDo(GetLambda(primary_input_isr));
@@ -75,9 +80,8 @@ TEST_CASE("Test LTC4150 Coulomb Counter/ Battery Gas Gauge", "[ltc4150]")
     constexpr float kBackupCharge  = 0.102407f;
     Ltc4150 primary_counter        = Ltc4150(
         mock_primary_input_pin.get(), mock_primary_pol_pin.get(), resistance);
-    Ltc4150 backup_counter = Ltc4150(mock_backup_input_pin.get(),
-                                     mock_backup_pol_pin.get(),
-                                     resistance);
+    Ltc4150 backup_counter = Ltc4150(
+        mock_backup_input_pin.get(), mock_backup_pol_pin.get(), resistance);
     When(Method(mock_primary_pol_pin, Read)).AlwaysReturn(true);
     When(Method(mock_backup_pol_pin, Read)).AlwaysReturn(false);
 
@@ -103,9 +107,8 @@ TEST_CASE("Test LTC4150 Coulomb Counter/ Battery Gas Gauge", "[ltc4150]")
     constexpr float kCancelledCharge = 0.0f;
     Ltc4150 primary_counter          = Ltc4150(
         mock_primary_input_pin.get(), mock_primary_pol_pin.get(), resistance);
-    Ltc4150 backup_counter = Ltc4150(mock_backup_input_pin.get(),
-                                     mock_backup_pol_pin.get(),
-                                     resistance);
+    Ltc4150 backup_counter = Ltc4150(
+        mock_backup_input_pin.get(), mock_backup_pol_pin.get(), resistance);
     When(Method(mock_primary_pol_pin, Read)).Return(true, false);
     When(Method(mock_backup_pol_pin, Read)).Return(false, true);
 
@@ -146,9 +149,8 @@ TEST_CASE("Test LTC4150 Coulomb Counter/ Battery Gas Gauge", "[ltc4150]")
     constexpr float kNegativeBackupCharge  = -0.03414f;
     Ltc4150 primary_counter                = Ltc4150(
         mock_primary_input_pin.get(), mock_primary_pol_pin.get(), resistance);
-    Ltc4150 backup_counter = Ltc4150(mock_backup_input_pin.get(),
-                                     mock_backup_pol_pin.get(),
-                                     resistance);
+    Ltc4150 backup_counter = Ltc4150(
+        mock_backup_input_pin.get(), mock_backup_pol_pin.get(), resistance);
     When(Method(mock_primary_pol_pin, Read)).Return(true, false);
     When(Method(mock_backup_pol_pin, Read)).Return(false, true);
 

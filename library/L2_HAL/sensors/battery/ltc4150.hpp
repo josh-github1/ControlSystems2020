@@ -3,8 +3,9 @@
 #include <cstdint>
 #include <atomic>
 
-#include "L2_HAL/sensors/battery/coulomb_counter.hpp"
 #include "L1_Peripheral/gpio.hpp"
+#include "L1_Peripheral/hardware_counter.hpp"
+#include "L2_HAL/sensors/battery/coulomb_counter.hpp"
 #include "utility/units.hpp"
 
 namespace sjsu
@@ -30,12 +31,13 @@ class Ltc4150 : public CoulombCounter
   /// @param pol - gpio pin to determine the polarity output of the LTC4150.
   /// @param resistance - value of impedance represented in ohms for
   ///        calculating battery charge
-  explicit constexpr Ltc4150(sjsu::Gpio & int_pin,
-                             sjsu::Gpio & pol,
+  explicit constexpr Ltc4150(Gpio & int_pin,
+                             Gpio & pol,
                              units::impedance::ohm_t resistance)
       : int_pin_(int_pin),
         pol_pin_(pol),
         resistance_(resistance),
+        counter_(int_pin_, Gpio::Edge::kEdgeFalling),
         pulses_(0),
         polarity_(Polarity::kDischarging)
   {
@@ -71,9 +73,10 @@ class Ltc4150 : public CoulombCounter
   }
 
  private:
-  sjsu::Gpio & int_pin_;
-  sjsu::Gpio & pol_pin_;
+  Gpio & int_pin_;
+  Gpio & pol_pin_;
   units::impedance::ohm_t resistance_;
+  GpioCounter counter_;
   std::atomic<int32_t> pulses_;
   std::atomic<Polarity> polarity_;
 };
