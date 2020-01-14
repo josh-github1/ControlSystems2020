@@ -8,12 +8,13 @@ class asmemxa : public Servo
  public:
   explicit constexpr asmemxa(const Pwm & pwm) : Servo(pwm) {}
 
-  void Initialize(
-      units::frequency::hertz_t frequency = 50_Hz) override
+  void Initialize(units::frequency::hertz_t frequency = 50_Hz) override
   {
     Servo::Initialize(frequency);
+    // Servo::SetPulseBounds(2ms, 8s);
+    Servo::SetAngleBounds(-1540_deg, 1540_deg);
     Servo::SetPulseBounds(500us, 2500us);
-    Servo::SetAngleBounds(-90_deg, 90_deg);
+    // Servo::SetAngleBounds(-90_deg, 90_deg);
   }
 };
 }  // namespace sjsu
