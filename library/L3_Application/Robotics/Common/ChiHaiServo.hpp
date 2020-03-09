@@ -10,6 +10,16 @@ namespace robotics
 {
 class ChiHaiServo
 {
+ private:
+  static constexpr float kResolution = 0.001f;
+  bool ApproximatelyEqual(units::angle::degree_t expected,
+                          units::angle::degree_t actual,
+                          float resolution)
+  {
+    return (-resolution < (actual.to<float>() - expected.to<float>())) &&
+           ((actual.to<float>() - expected.to<float>()) < resolution);
+  }
+
  public:
   explicit constexpr ChiHaiServo(
       sjsu::robotics::MagneticEncoder magnetic_encoder,
@@ -32,9 +42,11 @@ class ChiHaiServo
       // haha do math here to see if we should go forward or back
     }
     // can i use something else than a while loop here?
-    while (magnetic_encoder_.GetAngle() != angle)
+    while (!ApproximatelyEqual(current_degree, angle, kResolution))
     {
+      drv_.TurnBackward();
     }
+    drv_.Stop();
   }
   void Stop()
   {

@@ -11,6 +11,8 @@ namespace robotics
 class HubMotor
 {
  public:
+  static constexpr float kPositiveSpeedChange = 0.05f;
+  static constexpr float kNegativeSpeedChange = -0.05f;
   enum Direction : uint8_t
   {
     kForward  = 0,
@@ -44,17 +46,33 @@ class HubMotor
   // used for testing purposes only. e.g. does the board turn the motor?
   void Start() const
   {
-    brake_.SetDutyCycle(1.0f);
+    for (float i = 0.0f; i <= 1.0f; i += kPositiveSpeedChange)
+    {
+      brake_.SetDutyCycle(i);
+    }
   }
 
   void Stop() const
   {
-    brake_.SetDutyCycle(0.0f);
+    for (float i = 0.0f; i <= 1.0f; i += kNegativeSpeedChange)
+    {
+      brake_.SetDutyCycle(i);
+    }
+  }
+
+  void SetSpeed(float duty_cycle) const
+  {
+    float current_duty_cycle = brake_.GetDutyCycle();
+    float speed_change = current_duty_cycle > duty_cycle ? kNegativeSpeedChange
+                                                         : kPositiveSpeedChange;
+    for (float i = 0.0f; i <= 1.0f; i += speed_change)
+    {
+      brake_.SetDutyCycle(i);
+    }
   }
 
   // Not sure about this function. Will need to test it out in with smruthi
-  void SetSpeedAndDirection(float duty_cycle,
-                            Direction direction) const
+  void SetSpeedAndDirection(float duty_cycle, Direction direction) const
   {
     if (direction == Direction::kForward)
     {
@@ -64,7 +82,7 @@ class HubMotor
     {
       direction_pin_.SetLow();
     }
-    brake_.SetDutyCycle(duty_cycle);
+    SetSpeed(duty_cycle);
   }
 
  private:
