@@ -1,3 +1,10 @@
+/**
+ * Header file for Drv8801 speed controller functionality.
+ *
+ * @author SJSU Robotics - Control Systems
+ * @version Spring 2020
+ */
+
 #pragma once
 
 #include "utility/log.hpp"
@@ -16,12 +23,20 @@ static constexpr float kPwmLow  = 1.0f;
 class Drv8801
 {
  public:
+  /**
+   * Constructor for Drv8801 object. Takes a pwm and two gpio pins as
+   * parameters.
+   */
   explicit constexpr Drv8801(sjsu::Pwm & enable,
                              sjsu::Gpio & direction_pin,
                              sjsu::Gpio & mode_pin)
       : enable_(enable), direction_pin_(direction_pin), mode_pin_(mode_pin)
   {
   }
+
+  /**
+   * Initializes Drv8801 object.
+   */
   void Initialize()
   {
     enable_.Initialize(50_Hz);
@@ -29,18 +44,30 @@ class Drv8801
     mode_pin_.SetAsOutput();
     mode_pin_.SetLow();
   }
+
+  /**
+   * Sets the Drv8801 direction pin high. Moves motor "Forward".
+   */
   void TurnForward()
   {
     LOG_INFO("Direction pin high, PWM high");
     direction_pin_.SetHigh();
     enable_.SetDutyCycle(kPwmHigh);
   }
+
+  /**
+   * Sets the Drv8801 direction pin low. Moves motor "Backward".
+   */
   void TurnBackward()
   {
     LOG_INFO("Direction pin low, PWM high");
     direction_pin_.SetLow();
     enable_.SetDutyCycle(kPwmHigh);
   }
+
+  /**
+   * Stops the motor. Duty cycle set to zero.
+   */
   void Stop()
   {
     LOG_INFO("PWM low");

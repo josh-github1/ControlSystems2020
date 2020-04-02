@@ -19,7 +19,7 @@ class ArmController
 {
  public:
   /**
-   * Contructs armController object. Takes in 3 servo objects as parameters.
+   * Contructs ArmController object. Takes in 3 servo objects as parameters.
    *
    * @param shoulder The ChiHaiServo object which controls the motor outside the
    * wrist.
@@ -36,7 +36,7 @@ class ArmController
   }
 
   /**
-   * Begins shoulder, wrist, and rotunda motor setup.
+   * Initializes ArmController object.
    */
   void Initialize()
   {

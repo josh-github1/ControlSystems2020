@@ -1,10 +1,15 @@
+/**
+ * Header file for Magnetic Encoder functionality.
+ *
+ * @author SJSU Robotics - Control Systems
+ * @version Spring 2020
+ */
+
 #pragma once
 
 #include <cstdint>
 #include "utility/log.hpp"
 #include "L1_Peripheral/i2c.hpp"
-
-// Change these address values later
 
 namespace sjsu
 {

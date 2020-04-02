@@ -23,7 +23,7 @@ class RotundaServo : public Servo
   explicit constexpr RotundaServo(const Pwm & pwm) : Servo(pwm) {}
 
   /**
-   * Establishes frequency, pulse, and angle bounds.
+   * Initializes frequency, pulse, and angle bounds of RotundaServo object.
    * 
    * @param frequency Defaulted to 50_Hz for servo motors. 
    */

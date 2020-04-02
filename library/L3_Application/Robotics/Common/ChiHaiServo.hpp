@@ -1,3 +1,10 @@
+/**
+ * Header file for Chi Hai DC Brushless motor functionality.
+ *
+ * @author SJSU Robotics - Control Systems
+ * @version Spring 2020
+ */
+
 #pragma once
 
 #include "L3_Application/Robotics/Common/MagneticEncoder.hpp"
@@ -12,6 +19,16 @@ class ChiHaiServo
 {
  private:
   static constexpr float kResolution = 0.001f;
+
+  /**
+   * Checks whether the ChiHaiServo has moved within respectable degree of
+   * desired angle. Maybe uncomplete.
+   *
+   * @param expected degree to move towards.
+   * @param actual current degree of ChiHaiServo.
+   * @param resolution acceptable difference from expected and actual angles.
+   * @return whether the current angle is close enough to the desired angle.
+   */
   bool ApproximatelyEqual(units::angle::degree_t expected,
                           units::angle::degree_t actual,
                           float resolution)
@@ -21,33 +38,54 @@ class ChiHaiServo
   }
 
  public:
+  /**
+   * Constructs a ChiHaiServo object. Contains a MagneticEncoder and Drv8801.
+   */
   explicit constexpr ChiHaiServo(
       sjsu::robotics::MagneticEncoder magnetic_encoder,
       sjsu::robotics::Drv8801 drv)
       : magnetic_encoder_(magnetic_encoder), drv_(drv)
   {
   }
+
+  /**
+   * Initializes a ChaiHaiServo object.
+   */
   void Initialize()
   {
     magnetic_encoder_.Initialize();
     drv_.Initialize();
   }
+
+  /**
+   * Sets the angle of the Chi Hai motor by angle. Used by a PID controller.
+   *
+   * @see PID controller
+   * @param angle The degrees to move the Chi Hai motor.
+   */
   void SetAngle(units::angle::degree_t angle)
   {
     units::angle::degree_t current_degree = magnetic_encoder_.GetAngle();
-    // do some math to figure out whether we should turn clockwise or counter
-    // clockwise to get desired angle faster
-    if (current_degree - angle > 0_deg)
+    if (angle - current_degree > 0_deg)
     {
-      // haha do math here to see if we should go forward or back
+      drv_.TurnForward;
     }
-    // can i use something else than a while loop here?
-    while (!ApproximatelyEqual(current_degree, angle, kResolution))
+    else
     {
-      drv_.TurnBackward();
+      drv_.TurnBackward;
     }
+    // while (!ApproximatelyEqual(current_degree, angle, kResolution))
+    // {
+    //   drv_.TurnBackward();
+    // }
     drv_.Stop();
   }
+
+/**
+ * Instantly stops ChiHai motor movement.
+ * 
+ * @see exponential moving average
+ */
   void Stop()
   {
     drv_.Stop();
