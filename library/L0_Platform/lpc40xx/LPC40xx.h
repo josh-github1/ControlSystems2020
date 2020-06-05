@@ -658,7 +658,7 @@ typedef struct
 	_IO uint8_t  RS485DLY;
 	uint8_t  RESERVED11[3];//Reserved
 	_I  uint8_t  FIFOLVL;
-}LPC_UART_TypeDef;
+} LPC_UART_TypeDef;
 #endif
 
 
